@@ -4,7 +4,6 @@ import Menu from '@mui/material/Menu';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { listClasses } from '@mui/material/List';
-import Typography from '@mui/material/Typography';
 
 import Iconify from 'src/components/iconify';
 
@@ -35,12 +34,7 @@ export default function ShopProductSort() {
         color="inherit"
         onClick={handleOpen}
         endIcon={<Iconify icon={open ? 'eva:chevron-up-fill' : 'eva:chevron-down-fill'} />}
-      >
-        Sort By:&nbsp;
-        <Typography component="span" variant="subtitle2" sx={{ color: 'text.secondary' }}>
-          Newest
-        </Typography>
-      </Button>
+       />
 
       <Menu
         open={!!open}

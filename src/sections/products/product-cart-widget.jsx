@@ -1,7 +1,13 @@
+import { useState } from 'react';
+
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 
+import { useProductContext } from 'src/contexts/productContext';
+
 import Iconify from 'src/components/iconify';
+
+import BasicModal from './product-modal';
 
 // ----------------------------------------------------------------------
 
@@ -29,11 +35,23 @@ const StyledRoot = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function CartWidget() {
+  const { products } = useProductContext();
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const totalItems = products.reduce((acc, product) => acc + product.quantity, 0);
+
+
   return (
-    <StyledRoot>
-      <Badge showZero badgeContent={0} color="error" max={99}>
-        <Iconify icon="eva:shopping-cart-fill" width={24} height={24} />
-      </Badge>
-    </StyledRoot>
+    <>
+      <BasicModal open={open} handleClose={handleClose} />
+      <StyledRoot onClick={handleOpen}>
+        <Badge showZero badgeContent={totalItems} color="error" max={99}>
+          <Iconify icon="eva:shopping-cart-fill" width={24} height={24} />
+        </Badge>
+      </StyledRoot>
+    </>
   );
 }
