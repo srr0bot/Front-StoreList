@@ -1,7 +1,9 @@
 import { lazy, Suspense } from 'react';
 import { Outlet, Navigate, useRoutes } from 'react-router-dom';
 
+import RegisterPage from 'src/pages/register';
 import DashboardLayout from 'src/layouts/dashboard';
+
 
 export const IndexPage = lazy(() => import('src/pages/app'));
 export const BlogPage = lazy(() => import('src/pages/blog'));
@@ -13,25 +15,38 @@ export const Page404 = lazy(() => import('src/pages/page-not-found'));
 // ----------------------------------------------------------------------
 
 export default function Router() {
+
+
   const routes = useRoutes([
+    {
+      path: '/',
+      element: <LoginPage />,
+    },
+    {
+      path: 'app',
+      element: (
+        <DashboardLayout>
+          <IndexPage />
+        </DashboardLayout>
+      ),
+    },
     {
       element: (
         <DashboardLayout>
-          <Suspense>
+          <Suspense fallback={<div>Loading...</div>}>
             <Outlet />
           </Suspense>
         </DashboardLayout>
       ),
       children: [
-        { element: <IndexPage />, index: true },
         { path: 'user', element: <UserPage /> },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
       ],
     },
     {
-      path: 'login',
-      element: <LoginPage />,
+      path: 'register',
+      element: <RegisterPage/>,
     },
     {
       path: '404',

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -10,6 +10,8 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 
 import { account } from 'src/_mock/account';
+
+import DirectionSnackbar from 'src/components/toast/toast';
 
 // ----------------------------------------------------------------------
 
@@ -32,6 +34,9 @@ const MENU_OPTIONS = [
 
 export default function AccountPopover() {
   const [open, setOpen] = useState(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [message, setMessage] = useState('');
+  const [severity, setSeverity] = useState('success');
 
   const handleOpen = (event) => {
     setOpen(event.currentTarget);
@@ -39,7 +44,22 @@ export default function AccountPopover() {
 
   const handleClose = () => {
     setOpen(null);
+    setMessage('Cerrar sesión...');
+    setSeverity('info');
+    setShowAlert(true);
+
+    setTimeout(() => {
+      localStorage.removeItem('name');
+      localStorage.removeItem('type');
+      localStorage.removeItem('userId');
+      window.location.href = '/';
+    }, 3000);
   };
+
+  useEffect(() => {
+    const name = localStorage.getItem('name');
+    account.displayName = name || 'Anonymous';
+  }, []);
 
   return (
     <>
@@ -111,6 +131,12 @@ export default function AccountPopover() {
           Logout
         </MenuItem>
       </Popover>
+
+      <DirectionSnackbar
+        message={message}
+        severity={severity}
+        autoOpen={showAlert}
+      />
     </>
   );
 }

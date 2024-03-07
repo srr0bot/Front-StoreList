@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 
 import { useProductContext } from 'src/contexts/productContext';
 
+import Invoice from './product-invoice';
 import ProductItem from './product-cart-item';
 
 const style = {
@@ -25,6 +26,16 @@ const style = {
 export default function BasicModal({ handleClose, open }) {
   const { products, setProducts } = useProductContext();
 
+  const [showInvoice, setShowInvoice] = React.useState(false); // Estado para controlar la apertura de la factura
+
+  const handleOpenInvoice = () => {
+    setShowInvoice(true); // Abre el modal de la factura al hacer clic en el botón "Ver Factura"
+  };
+
+  const handleCloseInvoice = () => {
+    setShowInvoice(false); // Cierra el modal de la factura
+  };
+
   const handleSave = () => {
     // handleClose();
 
@@ -39,8 +50,8 @@ export default function BasicModal({ handleClose, open }) {
       date: new Date(),
       products: productsToSave,
       totalAmount,
+      client: localStorage.getItem('userId'),
     };
-
 
     fetch('http://localhost:3000/sales', {
       method: 'POST',
@@ -57,23 +68,26 @@ export default function BasicModal({ handleClose, open }) {
   };
 
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Carrito
-        </Typography>
-        {products.map((product) => (
-          <ProductItem key={product._id} product={product} />
-        ))}
-
-        <Button onClick={handleSave}>Guardar</Button>
-      </Box>
-    </Modal>
+    <>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Carrito
+          </Typography>
+          {products.map((product) => (
+            <ProductItem key={product._id} product={product} />
+          ))}
+          <Button onClick={handleOpenInvoice}>Ver Factura</Button>
+          <Button onClick={handleSave}>Comprar</Button>
+        </Box>
+      </Modal>
+      <Invoice open={showInvoice} handleClose={handleCloseInvoice} products={products} />
+    </>
   );
 }
 

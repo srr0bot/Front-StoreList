@@ -16,8 +16,8 @@ import ProductCartWidget from '../product-cart-widget';
 export default function ProductsView() {
   const [openFilter, setOpenFilter] = useState(false);
   const [editData, setEditData] = useState(null);
+  const [type, setType] = useState('cliente');
   const { reload } = useProductContext();
-
 
   const handleOpenFilter = (product) => {
     setEditData({ isOpen: true, data: product });
@@ -41,6 +41,10 @@ export default function ProductsView() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reload]);
 
+  useEffect(() => {
+     setType(localStorage.getItem('type'));
+  }, []);
+
   return (
     <Container>
       <Typography variant="h4" sx={{ mb: 5 }}>
@@ -55,14 +59,14 @@ export default function ProductsView() {
         sx={{ mb: 5 }}
       >
         <Stack direction="row" spacing={1} flexShrink={0} sx={{ my: 1 }}>
-          <NewProduct
-            openFilter={openFilter}
-            onOpenFilter={handleOpenFilter}
-            onCloseFilter={handleCloseFilter}
-            editData={editData}
-          />
-
-     
+          {type === 'admin' && (
+            <NewProduct
+              openFilter={openFilter}
+              onOpenFilter={handleOpenFilter}
+              onCloseFilter={handleCloseFilter}
+              editData={editData}
+            />
+          )}
         </Stack>
       </Stack>
 

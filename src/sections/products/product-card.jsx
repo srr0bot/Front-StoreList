@@ -1,4 +1,3 @@
-
 import PropTypes from 'prop-types';
 
 import Box from '@mui/material/Box';
@@ -16,34 +15,33 @@ import RenderButton from './product-button';
 // ---------------------------------------------------------------------
 
 export default function ShopProductCard({ product, openFilter, onOpenFilter, onCloseFilter }) {
+  const isAdmin = localStorage.getItem('type') === 'admin';
 
-  let color= 'error';
+  let color = 'error';
 
-    if (product.IVA === 0) {
-      color = 'success';
-    } else if (product.IVA === 5) {
-      color = 'info';
-    } else {
-      color = 'error'; 
-    }
+  if (product.IVA === 0) {
+    color = 'success';
+  } else if (product.IVA === 5) {
+    color = 'info';
+  } else {
+    color = 'error';
+  }
 
-
-    const renderStatus = (
-      <Label
-        variant="filled"
-        color={color}
-        sx={{
-          zIndex: 9,
-          top: 16,
-          right: 16,
-          position: 'absolute',
-          textTransform: 'uppercase',
-        }}
-      >
-        {product.IVA === 0 ? 'Sin IVA' : `IVA: ${product.IVA}%`}
-      </Label>
-    );
-    
+  const renderStatus = (
+    <Label
+      variant="filled"
+      color={color}
+      sx={{
+        zIndex: 9,
+        top: 16,
+        right: 16,
+        position: 'absolute',
+        textTransform: 'uppercase',
+      }}
+    >
+      {product.IVA === 0 ? 'Sin IVA' : `IVA: ${product.IVA}%`}
+    </Label>
+  );
 
   const renderImg = (
     <Box
@@ -76,12 +74,36 @@ export default function ShopProductCard({ product, openFilter, onOpenFilter, onC
       {fCurrency(product.price)}
     </Typography>
   );
-  
+
+  const renderButtons = (
+    <Stack direction="row" alignItems="center" justifyContent="space-between">
+      {renderPrice}
+      <RenderButton
+        product={product}
+        icon="eva:shopping-cart-fill"
+        action="addToCart"
+        color="primary"
+      />
+
+      {isAdmin && (
+        <>
+          <RenderButton
+            product={product}
+            icon="lucide:pencil"
+            action="edit"
+            setOpenFilter={onOpenFilter}
+          />
+
+          <RenderButton product={product} icon="eva:trash-2-fill" action="delete" color="error" />
+        </>
+      )}
+    </Stack>
+  );
 
   return (
     <Card>
       <Box sx={{ pt: '100%', position: 'relative' }}>
-        { renderStatus}
+        {renderStatus}
 
         {renderImg}
       </Box>
@@ -91,16 +113,7 @@ export default function ShopProductCard({ product, openFilter, onOpenFilter, onC
           {product.name}
         </Link>
 
-        <Stack direction="row" alignItems="center" justifyContent="space-between">
-          {renderPrice}
-          <RenderButton product={product} icon="eva:shopping-cart-fill" action= "addToCart" color= 'primary' />
-
-          <RenderButton product={product} icon="lucide:pencil" action = "edit" setOpenFilter={onOpenFilter} />
-          
-          <RenderButton product={product} icon="eva:trash-2-fill" action = "delete" color= 'error' />
-          
-
-        </Stack>
+        {renderButtons}
       </Stack>
     </Card>
   );
