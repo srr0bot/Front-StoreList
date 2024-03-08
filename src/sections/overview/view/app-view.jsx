@@ -17,6 +17,8 @@ export default function AppView() {
   const [salesData, setSalesData] = useState([]);
   const [statisticsMonth, setStatisticsMonth] = useState([]);
   const [statisticsByIva, setStatisticsByIva] = useState([]);
+  const [salesByIva, setSalesByIva] = useState([]);
+  const [salesByIvaSL, setSalesByIvaSL] = useState([]);
 
   // eslint-disable-next-line no-unused-vars
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -67,6 +69,8 @@ export default function AppView() {
       .then((data) => {
         setStatisticsMonth(data.data.statistics);
         setStatisticsByIva(data.data.groupedByIva);
+        setSalesByIva(data.data.salesByIva);
+        setSalesByIvaSL(data.data.salesByIvaSL);
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
@@ -136,6 +140,7 @@ export default function AppView() {
               value: sale.totalAmount,
             })),
           }}
+          data={salesByIva}
         />
       </Grid>
 
@@ -156,6 +161,8 @@ export default function AppView() {
           <AppWebsiteVisits
             title="Ventas por IVA"
             subheader={`Analisis de vetas por IVA para la fecha: ${selectedMonth}/${selectedYear}`}
+            data={salesByIva}
+            data2={salesByIvaSL}
             chart={{
               labels: statisticsByIva.labels,
               series: [
