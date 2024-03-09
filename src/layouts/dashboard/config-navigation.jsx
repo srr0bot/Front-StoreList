@@ -20,7 +20,7 @@ const generateMenu = (userType) => {
   if (userType === 'admin') {
     navConfig.unshift(
       {
-        title: 'Estadisticas',
+        title: 'Estadísticas',
         path: '/app',
         icon: icon('ic_analytics'),
       },
@@ -29,6 +29,11 @@ const generateMenu = (userType) => {
         path: '/register',
         icon: icon('ic_lock'),
       },
+      {
+        title: 'Vetas',
+        path: '/sales',
+        icon: icon('ic_Sales'), 
+      }
      
     );
   }
