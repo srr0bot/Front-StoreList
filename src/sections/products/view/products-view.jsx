@@ -14,6 +14,9 @@ import ProductCartWidget from '../product-cart-widget';
 // ----------------------------------------------------------------------
 
 export default function ProductsView() {
+
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const [openFilter, setOpenFilter] = useState(false);
   const [editData, setEditData] = useState(null);
   const [type, setType] = useState('cliente');
@@ -32,7 +35,7 @@ export default function ProductsView() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:3000/products')
+    fetch(`${API_URL}/products`)
       .then((response) => response.json())
       .then((data) => {
         setProducts([...data.data]);

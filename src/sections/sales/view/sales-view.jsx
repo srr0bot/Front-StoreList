@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 import VentaDetalle from '../sales-table';
 
 export default function SalesView() {
+
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const [ventas, setVentas] = useState([]);
   const [loading, setLoading] = useState(true); // Estado de carga
 
@@ -10,7 +13,7 @@ export default function SalesView() {
     // Simular una solicitud HTTP a la API para obtener la lista de ventas
     const fetchVentas = async () => {
       try {
-        const response = await fetch('http://localhost:3000/sales');
+        const response = await fetch(`${API_URL}/sales`);
         const data = await response.json();
         setVentas(data.data);
         setLoading(false); // Marcar como cargado cuando se obtienen los datos
@@ -20,6 +23,7 @@ export default function SalesView() {
     };
 
     fetchVentas();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

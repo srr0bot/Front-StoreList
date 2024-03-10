@@ -14,6 +14,9 @@ import AppConversionRates from '../app-conversion-rates';
 
 export default function AppView() {
   // eslint-disable-next-line no-unused-vars
+  
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const [salesData, setSalesData] = useState([]);
   const [statisticsMonth, setStatisticsMonth] = useState([]);
   const [statisticsByIva, setStatisticsByIva] = useState([]);
@@ -67,7 +70,7 @@ export default function AppView() {
     const formattedDate = currentDate.toISOString().split('T')[0];
 
     // Hacer la solicitud al back-end para obtener los datos
-    fetch(`http://localhost:3000/sales/${formattedDate}`)
+    fetch(`${API_URL}/sales/${formattedDate}`)
       .then((response) => response.json())
       .then((data) => {
         // Actualizar el estado con los datos obtenidos del back-end
@@ -76,10 +79,10 @@ export default function AppView() {
       .catch((error) => {
         console.error('Error fetching data:', error);
       });
-  }, [currentDate]);
+  }, [API_URL, currentDate]);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/sales/getByMonth/${selectedMonth}/${selectedYear}`)
+    fetch(`${API_URL}/sales/getByMonth/${selectedMonth}/${selectedYear}`)
       .then((response) => response.json())
       .then((data) => {
         setStatisticsMonth(data.data.statistics);
@@ -91,10 +94,11 @@ export default function AppView() {
       .catch((error) => {
         console.error('Error fetching data:', error);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedMonth, selectedYear]);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/activity/${currentDateVisits.toISOString().split('T')[0]}`)
+    fetch(`${API_URL}/activity/${currentDateVisits.toISOString().split('T')[0]}`)
       .then((response) => response.json())
       .then((data) => {
         setStatisticsVisits(data.count);
@@ -102,10 +106,11 @@ export default function AppView() {
       .catch((error) => {
         console.error('Error fetching data:', error);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentDateVisits, setStatisticsVisits]);
 
   useEffect(() => {
-    fetch(`http://localhost:3000/activity/${selectedMonthVisits}/${selectedYearVisits}`)
+    fetch(`${API_URL}/activity/${selectedMonthVisits}/${selectedYearVisits}`)
       .then((response) => response.json())
       .then((data) => {
         setStatisticsVisitsByMonthYear(data.data);
@@ -113,6 +118,7 @@ export default function AppView() {
       .catch((error) => {
         console.error('Error fetching data:', error);
       });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedMonthVisits, selectedYearVisits]);
 
   const renderInputDate = (

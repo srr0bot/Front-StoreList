@@ -8,6 +8,9 @@ import { useProductContext } from 'src/contexts/productContext';
 import Iconify from 'src/components/iconify';
 
 export default function RenderButton({ product, icon, action, setOpenFilter, color }) {
+  
+  const API_URL = import.meta.env.VITE_API_URL;
+  
   const { handleAddToCart, reloadData } = useProductContext();
 
   const handleClick = () => {
@@ -17,7 +20,7 @@ export default function RenderButton({ product, icon, action, setOpenFilter, col
       setOpenFilter(true, product);
     } else if (action === 'delete') {
      
-      fetch(`http://localhost:3000/products/${product._id}`, {
+      fetch(`${API_URL}/products/${product._id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

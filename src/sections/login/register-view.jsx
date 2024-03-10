@@ -26,6 +26,8 @@ import DirectionSnackbar from 'src/components/toast/toast';
 
 export default function RegisterView({ isAdmin }) {
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
@@ -85,7 +87,7 @@ export default function RegisterView({ isAdmin }) {
     
 
     try {
-      const response = await fetch('http://localhost:3000/users', {
+      const response = await fetch(`${API_URL}/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

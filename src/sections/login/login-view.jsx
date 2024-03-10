@@ -21,9 +21,14 @@ import Logo from 'src/components/logo';
 import Iconify from 'src/components/iconify';
 import DirectionSnackbar from 'src/components/toast/toast';
 
+
+
 // ----------------------------------------------------------------------
 
 export default function LoginView() {
+
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -51,7 +56,7 @@ export default function LoginView() {
   const [showPassword, setShowPassword] = useState(false);
 
   const createRegister = (id) => {
-    fetch('http://localhost:3000/activity/login', {
+    fetch(`${API_URL}/activity/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -75,7 +80,7 @@ export default function LoginView() {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/users/login', {
+      const response = await fetch(`${API_URL}/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -24,6 +24,9 @@ const style = {
 };
 
 export default function BasicModal({ handleClose, open }) {
+  
+  const API_URL = import.meta.env.VITE_API_URL;
+  
   const { products, setProducts } = useProductContext();
 
   const [showInvoice, setShowInvoice] = React.useState(false); // Estado para controlar la apertura de la factura
@@ -53,7 +56,7 @@ export default function BasicModal({ handleClose, open }) {
       client: localStorage.getItem('userId'),
     };
 
-    fetch('http://localhost:3000/sales', {
+    fetch(`${API_URL}/sales`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

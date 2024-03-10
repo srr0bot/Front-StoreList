@@ -45,6 +45,9 @@ export const COLOR_OPTIONS = [
 // ----------------------------------------------------------------------
 
 export default function NewProduct({ openFilter, onOpenFilter, onCloseFilter, editData }) {
+  
+  const API_URL = import.meta.env.VITE_API_URL;
+  
   // eslint-disable-next-line no-unused-vars
   const [id, setId] = useState('');
   const [name, setName] = useState('');
@@ -139,8 +142,8 @@ export default function NewProduct({ openFilter, onOpenFilter, onCloseFilter, ed
     };
 
     const url = editData?.data?._id
-      ? `http://localhost:3000/products/${editData.data._id}`
-      : 'http://localhost:3000/products';
+      ? `${API_URL}/products/${editData.data._id}`
+      : `${API_URL}/products`;
 
     const method = editData?.data?._id ? 'PUT' : 'POST';
 
