@@ -19,12 +19,19 @@ export default function AppView() {
   const [statisticsByIva, setStatisticsByIva] = useState([]);
   const [salesByIva, setSalesByIva] = useState([]);
   const [salesByIvaSL, setSalesByIvaSL] = useState([]);
+  const [summarySales, setSummarySales] = useState([]);
+  const [statisticsVisits, setStatisticsVisits] = useState([]);
+  const [statisticsVisitsByMonthYear, setStatisticsVisitsByMonthYear] = useState([]);
 
   // eslint-disable-next-line no-unused-vars
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDateVisits, setCurrentDateVisits] = useState(new Date());
 
   const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
+
+  const [selectedMonthVisits, setSelectedMonthVisits] = useState(currentDateVisits.getMonth() + 1);
+  const [selectedYearVisits, setSelectedYearVisits] = useState(currentDateVisits.getFullYear());
 
   // Generar los options para los meses
   const monthOptions = Array.from({ length: 12 }, (_, i) => ({
@@ -45,6 +52,14 @@ export default function AppView() {
 
   const handleYearChange = (event) => {
     setSelectedYear(event.target.value);
+  };
+
+  const handleMonthvisitsChange = (event) => {
+    setSelectedMonthVisits(event.target.value);
+  };
+
+  const handleYearVisitsChange = (event) => {
+    setSelectedYearVisits(event.target.value);
   };
 
   useEffect(() => {
@@ -71,11 +86,34 @@ export default function AppView() {
         setStatisticsByIva(data.data.groupedByIva);
         setSalesByIva(data.data.salesByIva);
         setSalesByIvaSL(data.data.salesByIvaSL);
+        setSummarySales(data.data.summary);
       })
       .catch((error) => {
         console.error('Error fetching data:', error);
       });
   }, [selectedMonth, selectedYear]);
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/activity/${currentDateVisits.toISOString().split('T')[0]}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setStatisticsVisits(data.count);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      });
+  }, [currentDateVisits, setStatisticsVisits]);
+
+  useEffect(() => {
+    fetch(`http://localhost:3000/activity/${selectedMonthVisits}/${selectedYearVisits}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setStatisticsVisitsByMonthYear(data.data);
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      });
+  }, [selectedMonthVisits, selectedYearVisits]);
 
   const renderInputDate = (
     <Stack spacing={1}>
@@ -163,6 +201,8 @@ export default function AppView() {
             subheader={`Analisis de vetas por IVA para la fecha: ${selectedMonth}/${selectedYear}`}
             data={salesByIva}
             data2={salesByIvaSL}
+            invoce
+            isDate
             chart={{
               labels: statisticsByIva.labels,
               series: [
@@ -192,6 +232,114 @@ export default function AppView() {
     </>
   );
 
+  const renderStatisticsVisits = (
+    <>
+      <Grid item xs={12} sm={12} md={4}>
+        <Stack spacing={1}>
+          <Typography variant="subtitle2">Fecha</Typography>
+          <TextField
+            type="date"
+            defaultValue={currentDate.toISOString().split('T')[0]}
+            label="Valor"
+            variant="outlined"
+            onChange={(e) => {
+              setCurrentDateVisits(new Date(e.target.value));
+            }}
+          />
+        </Stack>
+      </Grid>
+      <Grid xs={12} md={12} lg={12}>
+        {statisticsVisits && statisticsVisits.series && statisticsVisits.series.length > 0 && (
+          <AppWebsiteVisits
+            title="Registro de actividad"
+            subheader={`Analisis de registro de actividad: ${selectedMonth}/${selectedYear}`}
+            invoce={false}
+            isDate={false}
+            chart={{
+              labels: statisticsVisits.labels,
+              series: [
+                {
+                  ...statisticsVisits.series[0],
+                  fill: 'solid',
+                  type: 'line',
+                },
+                {
+                  ...statisticsVisits.series[1],
+                  fill: 'gradient',
+                  type: 'area',
+                },
+              ],
+            }}
+          />
+        )}
+      </Grid>
+
+      <Grid item xs={12} sm={12} md={4}>
+        <FormControl fullWidth>
+          <InputLabel id="select-month-label">Mes</InputLabel>
+          <Select
+            labelId="select-month-label"
+            value={selectedMonthVisits}
+            onChange={handleMonthvisitsChange}
+            label="Mes"
+          >
+            {monthOptions.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Grid>
+
+      <Grid item xs={12} sm={12} md={4}>
+        <FormControl fullWidth>
+          <InputLabel id="select-year-label">Año</InputLabel>
+          <Select
+            labelId="select-year-label"
+            value={selectedYearVisits}
+            onChange={handleYearVisitsChange}
+            label="Año"
+          >
+            {yearOptions.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Grid>
+
+      <Grid xs={12} md={12} lg={12}>
+        {statisticsVisitsByMonthYear &&
+          statisticsVisitsByMonthYear.series &&
+          statisticsVisitsByMonthYear.series.length > 0 && (
+            <AppWebsiteVisits
+              title="Registro de actividad"
+              subheader={`Analisis de registro de actividad : ${selectedMonthVisits}/${selectedYearVisits}`}
+              invoce={false}
+              isDate
+              chart={{
+                labels: statisticsVisitsByMonthYear.labels,
+                series: [
+                  {
+                    ...statisticsVisitsByMonthYear.series[0],
+                    fill: 'solid',
+                    type: 'line',
+                  },
+                  {
+                    ...statisticsVisitsByMonthYear.series[1],
+                    fill: 'solid',
+                    type: 'line',
+                  },
+                ],
+              }}
+            />
+          )}
+      </Grid>
+    </>
+  );
+
   return (
     <Container maxWidth="xl">
       <Typography variant="h4" sx={{ mb: 5 }}>
@@ -200,40 +348,48 @@ export default function AppView() {
 
       <Grid container spacing={3}>
         <Grid xs={12} sm={6} md={3}>
-          <AppWidgetSummary
-            title="Weekly Sales"
-            total={714000}
-            color="success"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
-          />
+          {summarySales.mostSoldProduct && (
+            <AppWidgetSummary
+              title="Ventas totales"
+              total={summarySales.totalSales}
+              color="success"
+              icon={<img alt="icon" src="/assets/icons/glass/ic_glass_bag.png" />}
+            />
+          )}
           {renderInputDate}
         </Grid>
 
         <Grid xs={12} sm={6} md={3}>
-          <AppWidgetSummary
-            title="New Users"
-            total={1352831}
-            color="info"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
-          />
+          {summarySales.mostSoldProduct && (
+            <AppWidgetSummary
+              title="Total de usuarios"
+              total={summarySales.totalUsers}
+              color="info"
+              icon={<img alt="icon" src="/assets/icons/glass/ic_glass_users.png" />}
+            />
+          )}
         </Grid>
 
         <Grid xs={12} sm={6} md={3}>
-          <AppWidgetSummary
-            title="Item Orders"
-            total={1723315}
-            color="warning"
-            icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
-          />
+          {summarySales.mostSoldProduct && (
+            <AppWidgetSummary
+              title={`Producto más vendido - ${summarySales.mostSoldProduct.productName}`}
+              total={summarySales.mostSoldProduct.totalSold}
+              color="warning"
+              icon={<img alt="icon" src="/assets/icons/glass/ic_glass_buy.png" />}
+            />
+          )}
         </Grid>
 
         <Grid xs={12} sm={6} md={3}>
+        {summarySales.mostSoldProduct && (
           <AppWidgetSummary
-            title="Bug Reports"
-            total={234}
+            title={`Producto menos vendido ${summarySales.leastSoldProduct.productName}`}
+            total={summarySales.leastSoldProduct.totalSold}
             color="error"
             icon={<img alt="icon" src="/assets/icons/glass/ic_glass_message.png" />}
           />
+        )}
         </Grid>
 
         <Grid xs={12} md={6} lg={8}>
@@ -262,6 +418,7 @@ export default function AppView() {
         </Grid>
 
         {renderStatisticsByMount}
+        {renderStatisticsVisits}
       </Grid>
     </Container>
   );

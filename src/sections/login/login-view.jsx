@@ -50,6 +50,20 @@ export default function LoginView() {
 
   const [showPassword, setShowPassword] = useState(false);
 
+  const createRegister = (id) => {
+    fetch('http://localhost:3000/activity/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id }),
+    }).then((response) => {
+      if (response.ok) {
+        console.log('Registro de actividad creado');
+      }
+    });
+  }
+
   const handleClick = async (event) => {
     event.preventDefault();
 
@@ -71,7 +85,7 @@ export default function LoginView() {
 
       const responseData = await response.json(); // Convertir la respuesta a JSON
       if (response.ok) {
-        // Guardar el email y el tipo de usuario en el localStorage
+      
         setUserType(responseData.data.type);
 
         localStorage.setItem('name', responseData.data.email); // Guardar el email como 'name'
@@ -82,12 +96,17 @@ export default function LoginView() {
         setSeverity('success');
         setShowAlert(true);
 
+        if (responseData.data.type !== 'admin') {
+          createRegister(responseData.data.id);
+        }
+
         setTimeout(() => {
           // El usuario ha sido autenticado correctamente, redirige a la página de dashboard u otra página
           if (userType === 'admin') {
             router.push('/app');
           } else {
             router.push('/products');
+            
           }
         }, 2000);
       } else {

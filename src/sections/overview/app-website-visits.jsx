@@ -24,8 +24,10 @@ export default function AppWebsiteVisits({
   subheader,
   subheader2,
   chart,
-  data,
+  data = {},
   data2,
+  invoce,
+  isDate,
   ...other
 }) {
   const { labels, colors, series, options } = chart;
@@ -58,7 +60,7 @@ export default function AppWebsiteVisits({
     },
     labels,
     xaxis: {
-      type: 'datetime',
+      type: isDate ? 'datetime' : 'category',
     },
     tooltip: {
       shared: true,
@@ -66,7 +68,7 @@ export default function AppWebsiteVisits({
       y: {
         formatter: (value) => {
           if (typeof value !== 'undefined') {
-            return `${value.toFixed(0)} Ventas`;
+            return `${value.toFixed(0)} ${invoce ? 'Ventas' : ''}`;
           }
           return value;
         },
@@ -87,65 +89,65 @@ export default function AppWebsiteVisits({
 
   const tableInvoceDate = (
     <>
-      {Object.entries(data).map(([iva, sales]) => (
-        <div key={iva}>
-          <Typography variant="h6" gutterBottom>
-            {iva}
-          </Typography>
-          <TableContainer>
-            <Table>
-              <TableBody>
-                <TableRow>
-                  <TableCell>Fecha</TableCell>
-                  <TableCell>Nombre del Producto</TableCell>
-                  <TableCell align="right">Valor sin IVA</TableCell>
-                  <TableCell align="right">Valor con IVA</TableCell>
-                  <TableCell align="right">Cantidad</TableCell>
-                  <TableCell align="right">Total Pagado</TableCell>
-                </TableRow>
-                {sales.map((sale) => (
-                  <TableRow key={sale.saleId}>
-                    <TableCell>{sale.date}</TableCell>
-                    <TableCell>{sale.products.productName}</TableCell>
-                    <TableCell align="right">
-                      {(sale.products.productPrice * (1 - sale.products.IVA / 100)).toFixed(2)}
+      {invoce &&
+        Object.entries(data).map(([iva, sales]) => (
+          <div key={iva}>
+            <Typography variant="h6" gutterBottom>
+              {iva}
+            </Typography>
+            <TableContainer>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>Fecha</TableCell>
+                    <TableCell>Nombre del Producto</TableCell>
+                    <TableCell align="right">Valor sin IVA</TableCell>
+                    <TableCell align="right">Valor con IVA</TableCell>
+                    <TableCell align="right">Cantidad</TableCell>
+                    <TableCell align="right">Total Pagado</TableCell>
+                  </TableRow>
+                  {sales.map((sale) => (
+                    <TableRow key={sale.saleId}>
+                      <TableCell>{sale.date}</TableCell>
+                      <TableCell>{sale.products.productName}</TableCell>
+                      <TableCell align="right">
+                        {(sale.products.productPrice * (1 - sale.products.IVA / 100)).toFixed(2)}
+                      </TableCell>
+                      <TableCell align="right">{sale.products.productPrice}</TableCell>
+                      <TableCell align="right">{sale.products.productQuantity}</TableCell>
+                      <TableCell align="right">
+                        {(sale.products.productQuantity * sale.products.productPrice).toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  <TableRow>
+                    <TableCell colSpan={4} align="right">
+                      TOTAL
                     </TableCell>
-                    <TableCell align="right">{sale.products.productPrice}</TableCell>
-                    <TableCell align="right">{sale.products.productQuantity}</TableCell>
                     <TableCell align="right">
-                      {(sale.products.productQuantity * sale.products.productPrice).toFixed(2)}
+                      {sales.reduce((total, sale) => total + sale.products.productQuantity, 0)}
+                    </TableCell>
+                    <TableCell align="right">
+                      {sales
+                        .reduce(
+                          (total, sale) =>
+                            total + sale.products.productQuantity * sale.products.productPrice,
+                          0
+                        )
+                        .toFixed(2)}
                     </TableCell>
                   </TableRow>
-                ))}
-                <TableRow>
-                  <TableCell colSpan={4} align="right">
-                    TOTAL
-                  </TableCell>
-                  <TableCell align="right">
-                    {sales.reduce((total, sale) => total + sale.products.productQuantity, 0)}
-                  </TableCell>
-                  <TableCell align="right">
-                    {sales
-                      .reduce(
-                        (total, sale) =>
-                          total + sale.products.productQuantity * sale.products.productPrice,
-                        0
-                      )
-                      .toFixed(2)}
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </div>
-      ))}
-     <div>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </div>
+        ))}
+      <div>
         <TableContainer>
           <Table>
             <TableBody>
-
               <TableRow>
-                <TableCell >
+                <TableCell>
                   <Typography variant="h6">Total del mes</Typography>
                 </TableCell>
                 <TableCell align="right">
@@ -164,63 +166,63 @@ export default function AppWebsiteVisits({
 
   const tableInvoceSL = (
     <>
-      {Object.entries(data2).map(([iva, sales]) => (
-        <div key={iva}>
-          <Typography variant="h6" gutterBottom>
-            {iva}
-          </Typography>
-          <TableContainer>
-            <Table>
-              <TableBody>
-                <TableRow>
-                  <TableCell>Nombre del Producto</TableCell>
-                  <TableCell align="right">Valor sin IVA</TableCell>
-                  <TableCell align="right">Valor con IVA</TableCell>
-                  <TableCell align="right">Cantidad</TableCell>
-                  <TableCell align="right">Total Pagado</TableCell>
-                </TableRow>
-                {sales.map((sale) => (
-                  <TableRow key={sale.saleId}>
-                    <TableCell>{sale.products.productName}</TableCell>
-                    <TableCell align="right">
-                      {(sale.products.productPrice * (1 - sale.products.IVA / 100)).toFixed(2)}
+      {invoce &&
+        Object.entries(data2).map(([iva, sales]) => (
+          <div key={iva}>
+            <Typography variant="h6" gutterBottom>
+              {iva}
+            </Typography>
+            <TableContainer>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>Nombre del Producto</TableCell>
+                    <TableCell align="right">Valor sin IVA</TableCell>
+                    <TableCell align="right">Valor con IVA</TableCell>
+                    <TableCell align="right">Cantidad</TableCell>
+                    <TableCell align="right">Total Pagado</TableCell>
+                  </TableRow>
+                  {sales.map((sale) => (
+                    <TableRow key={sale.products.productId}>
+                      <TableCell>{sale.products.productName}</TableCell>
+                      <TableCell align="right">
+                        {(sale.products.productPrice * (1 - sale.products.IVA / 100)).toFixed(2)}
+                      </TableCell>
+                      <TableCell align="right">{sale.products.productPrice}</TableCell>
+                      <TableCell align="right">{sale.products.productQuantity}</TableCell>
+                      <TableCell align="right">
+                        {(sale.products.productQuantity * sale.products.productPrice).toFixed(2)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  <TableRow>
+                    <TableCell colSpan={3} align="right">
+                      TOTAL
                     </TableCell>
-                    <TableCell align="right">{sale.products.productPrice}</TableCell>
-                    <TableCell align="right">{sale.products.productQuantity}</TableCell>
                     <TableCell align="right">
-                      {(sale.products.productQuantity * sale.products.productPrice).toFixed(2)}
+                      {sales.reduce((total, sale) => total + sale.products.productQuantity, 0)}
+                    </TableCell>
+                    <TableCell align="right">
+                      {sales
+                        .reduce(
+                          (total, sale) =>
+                            total + sale.products.productQuantity * sale.products.productPrice,
+                          0
+                        )
+                        .toFixed(2)}
                     </TableCell>
                   </TableRow>
-                ))}
-                <TableRow>
-                  <TableCell colSpan={3} align="right">
-                    TOTAL
-                  </TableCell>
-                  <TableCell align="right">
-                    {sales.reduce((total, sale) => total + sale.products.productQuantity, 0)}
-                  </TableCell>
-                  <TableCell align="right">
-                    {sales
-                      .reduce(
-                        (total, sale) =>
-                          total + sale.products.productQuantity * sale.products.productPrice,
-                        0
-                      )
-                      .toFixed(2)}
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </div>
-      ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </div>
+        ))}
       <div>
         <TableContainer>
           <Table>
             <TableBody>
-
               <TableRow>
-                <TableCell >
+                <TableCell>
                   <Typography variant="h6">Total del mes</Typography>
                 </TableCell>
                 <TableCell align="right">
@@ -249,14 +251,16 @@ export default function AppWebsiteVisits({
             </>
           }
           action={
-            <>
-              <Button onClick={handleOpenInvoice} aria-label="Ver en factura simple">
-                Ver en factura simple
-              </Button>
-              <Button onClick={handleOpenInvoice2} aria-label="Ver en factura por fechas">
-                Ver en factura por fechas
-              </Button>
-            </>
+            invoce ? (
+              <>
+                <Button onClick={handleOpenInvoice} aria-label="Ver en factura simple">
+                  Ver en factura simple
+                </Button>
+                <Button onClick={handleOpenInvoice2} aria-label="Ver en factura por fechas">
+                  Ver en factura por fechas
+                </Button>
+              </>
+            ) : null
           }
         />
         <Box sx={{ p: 3, pb: 1 }}>
@@ -264,7 +268,10 @@ export default function AppWebsiteVisits({
             dir="ltr"
             type="line"
             series={series.map((item) => ({
-              name: ` ${item.name} - Productos: ${item.totalProducts} - $${item.totalPrice}`, // Nombre de la serie
+              name: invoce
+                ? `${item.name} - Productos: ${item.totalProducts} - $${item.totalPrice}`
+                : `${item.name} - ${item.total}`,
+
               data: item.data, // Datos de la serie
               fill: item.fill, // Tipo de relleno de la serie
               type: item.type, // Tipo de gráfico de la serie
@@ -292,4 +299,6 @@ AppWebsiteVisits.propTypes = {
   title: PropTypes.string,
   data: PropTypes.object,
   data2: PropTypes.object,
+  invoce: PropTypes.bool,
+  isDate: PropTypes.bool
 };
