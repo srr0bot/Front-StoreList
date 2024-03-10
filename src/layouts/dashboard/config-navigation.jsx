@@ -30,7 +30,7 @@ const generateMenu = (userType) => {
         icon: icon('ic_lock'),
       },
       {
-        title: 'Vetas',
+        title: 'Ventas',
         path: '/sales',
         icon: icon('ic_Sales'), 
       }
